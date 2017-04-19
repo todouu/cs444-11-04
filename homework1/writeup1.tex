@@ -1,0 +1,69 @@
+\input{preamble}
+
+\title{
+	Project One Writeup \\
+    {
+    	% Document Sub-title
+    	\LARGE Spring 2017 
+    }
+}
+\author{
+  \IEEEauthorblockN{Shuai Peng (pengs),}
+  \IEEEauthorblockN{Anya Lehman (lehmana),}
+ \IEEEauthorblockN{Andrew Bowers (bowerand),}
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Document
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Title Page
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\maketitle
+\begin{abstract}
+  This is our write up for the project one \textit{Getting Acquainted}.
+\end{abstract}
+
+\clearpage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Command Log
+% > briefly recaps the steps we took along the path of project one
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Command Log}
+\begin{enumerate}
+    \item To start we logged on to the os-class \textit{ssh username@os-class.oregonstate.edu}
+    \item Then we used cd to get to the correct folder in scratch/spring2017 \textit{cd /scratch/spring2017}
+    \item Then we made a group folder for us all to work in \textit{mkdir 11-04}
+    \item Next we struggled to make said folder accessible to all of our gorup members by changing the permitions on it so not just the group member that cr    eated the directory could work in it \textit{chmod 777 11-04}
+    \item Then we called git clone to download the project from the GitHub account and we checked to make sure we got all the correct files \textit{git clone git://git.yoctoproject.org/linux-yocto-3.14}
+    \item Then we switched to the tag we needed by using cd again and going into the directory that was cloned into our folder \textit{cd linux-yocto-3.14}
+    \item Following this we checked out the v3.14.26 \textit{git checkout v3.14.26}
+    \item Next came configuring the environment which we did by calling \textit{source /scratch/opt/environment-setup-i586-poky-linux}
+    \item Then we made a kernel instance for our group
+    \item Then we coppied in the files that lets us configure \textit{cp /scratch/spring2017/files/config-3.14.26-yocto-qemu .config}
+    \item Then we ran \textit{make menuconfig}
+    \item A window popped up
+    \item In this window we pressed \textit{/} and typed \textit{LOCALVERSION}
+    \item Next we pressed \textit{1} and edited the value to be \textit{-11-04-hw1} to make that the name of the kernel
+    \item Then we built our kernel with four threads by running \textit{-j4}
+    \item Then we ran \textit{cd ..} followed by \textit{gdb}
+    \item Our next step was to move onto a different laptop and called \textit{source /scratch/opt/environment-setup-i586-poky-linux } again
+    \item Then we made a copy for the starting kernel and the drive file located in the scratch directory by calling \textit{/scratch/spring2017/files/core-    image-lsb-sdk-qemux86.ext3}
+    \item Then we tried running the starting kernel \textit{qemu-system-i386 -gdb tcp::5604 -S -nographic -kernel bzImage-qemux86.bin -drive file=core-image    -lsb-sdk-qemux86.ext3,if=virtio -enable-kvm -net none -usb -localtime --no-reboot --append "root=/dev/vda rw console=ttyS0 debug"}
+    \item Since we previously ran the qemu in debug mode, we used gdb to control it so, back on the origonal computer, we connected the qemu by running \textit{target remote :5604}
+    \item Then we rebooted the VM \textit{reboot}
+    \item Then we tried running the kernel instance we had created \textit{linux-yocto-3.14/arch/x86/boot/}
+    \item Then we ran \textit{qemu-system-i386 -gdb tcp::5601 -S -nographic -kernel linux-yocto-3.14/arch/x86/boot/bzImage  -drive file=core-image-lsb-sdk-q    emux86.ext3,if=virtio -enable-kvm -net none -usb -localtime --no-reboot --append "root=/dev/vda rw console=ttyS0 debug"}
+    \item Finally we rebooted the vm and used \textit{q} to quit
+\end{enumerate}
+\section{Explaition of the Flags}
+
+\section{Questions Regarding Concurrency}
+
+\section{Version Control Log}
+
+
+\end{document}
