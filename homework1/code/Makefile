@@ -1,6 +1,6 @@
 CC 			= gcc
 CFLAGS		= -Wall -g -v -std=c99
-LIBRARIES 	= -lpthread
+LIBRARIES 	= -lpthread -mrdrnd
 DEPS		= concurrency1.h mt.h
 OBJ			= concurrency1.o  
 

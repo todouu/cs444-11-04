@@ -1,3 +1,4 @@
 *.bin
 core-image-lsb-sdk-qemux86.ext3
-linux-yocto-3.14_old/
+*.swp
+*.o
