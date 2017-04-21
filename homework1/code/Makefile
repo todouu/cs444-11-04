@@ -1,8 +1,8 @@
 CC 			= gcc
-CFLAGS		= -Wall -g -v -std=c11
+CFLAGS		= -Wall -g -v -std=c99
 LIBRARIES 	= -lpthread
-DEPS		= concurrency1.h c_stack.h
-OBJ			= concurrency1.o c_stack.o
+DEPS		= concurrency1.h mt.h
+OBJ			= concurrency1.o  
 
 %.o: %.c $(DEPS)
 	$(CC) -c -o $@ $< $(CFLAGS) $(LIBRARIES) 
