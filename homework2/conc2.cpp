@@ -18,11 +18,11 @@ pthread_cond_t fork_empty;
 
 
 var_frk arr_fork[]= {{false}, {false}, {false}, {false}, {false} };
-philosopher arr_phil[] = {{4, 0, "Edsger Dijkstra", false, false}, 
-		    {0, 1, "Harrison Ford", false, false},
-	   	    {1, 2, "Will Smith", false, false}, 
-		    {2, 3, "Gottfried Leibniz", false, false}, 
-		    {3, 4, "Garth Brooks", false, false}};  
+philosopher arr_phil[] = {{4, 0, "Edsger Dijkstra", false, false, 0}, 
+		    {0, 1, "Harrison Ford", false, false, 0},
+	   	    {1, 2, "Will Smith", false, false, 0}, 
+		    {2, 3, "Gottfried Leibniz", false, false, 0}, 
+		    {3, 4, "Garth Brooks", false, false, 0}};  
 
 
 /*
@@ -31,12 +31,12 @@ philosopher arr_phil[] = {{4, 0, "Edsger Dijkstra", false, false},
  * 		-Thread prints it's # and think time (the rand number)
  * 		-Think sleeps for think time (the rand number)
  */
-void think(int x, philosopher *arr_phil)
+void think(int x)
 {
 	int rand_var = rand() % 20 + 1; // rand range 1-20 seconds;
 	
 	// PRINT "Thread -insert number- is sleeping for rand_var
-	printf("%s is thinking for %d seconds\n", arr_phil[x].name.c_str(), rand_var);
+	printf("ID:%d, %s is thinking for %d seconds\n", x ,arr_phil[x].name.c_str(), rand_var);
 	sleep(rand_var);
 }
 
@@ -46,12 +46,12 @@ void think(int x, philosopher *arr_phil)
  * 		-Thread prints it's # and eat time (the rand number)
  * 		-Eat sleeps for eat time (the rand number)
  */
-void eat(int x,  philosopher *arr_phil ) 
+void eat(int x) 
 {
 	int rand_var = rand() % 9 + 2; // rand range for 2-9 seconds;
 
 	//PRINT "Thread -insert thread number- is eating for rand_var
-	printf("%s is eating for %d seconds\n", arr_phil[x].name.c_str(), rand_var);
+	printf("ID:%d, %s is eating for %d seconds\n", x ,arr_phil[x].name.c_str(), rand_var);
 	sleep(rand_var);
 }
 
@@ -59,26 +59,27 @@ void eat(int x,  philosopher *arr_phil )
  id* Get fork function
  * Information: -Lets a thread pick up a left and right fork if avaialable so it can eat
  */
-int get_fork(int id, philosopher* me, var_frk *afrk) 
+int get_fork(int id) 
 {
-	printf("%s get a fork. \n", me[id].name.c_str());	
 	// letting neighbors know that we are grabbing the forks
-	me[id].getting_right_frk = true;
-	me[id].getting_left_frk = true;
+	arr_phil[id].getting_right_frk = true;
+	arr_phil[id].getting_left_frk = true;
 
 	// check if left and right hand are in use
-	if (afrk[ me[id].left ].in_use == true || afrk[ me[id].right ].in_use == true){
-		printf("%s cannot grab a fork.\n", me[id].name.c_str());
-		me[id].getting_right_frk = false;
-		me[id].getting_left_frk = false;
+	if (arr_fork[ arr_phil[id].left ].in_use == true || arr_fork[ arr_phil[id].right ].in_use == true){
+		printf("ID:%d, %s cannot grab a fork.\n", id, arr_phil[id].name.c_str());
+		puts("==========Lose============");
+		arr_phil[id].getting_right_frk = false;
+		arr_phil[id].getting_left_frk = false;
 		return 0;
 	}
 	else{
-		printf("%s has the forks.\n\n", me[id].name.c_str());
-		afrk[ me[id].left ].in_use = true;
-		afrk[ me[id].right].in_use = true;
-		me[id].getting_right_frk = false;
-		me[id].getting_left_frk = false;
+		printf("ID:%d, %s has the forks.\n", id, arr_phil[id].name.c_str());
+		arr_fork[ arr_phil[id].left ].in_use = true;
+		arr_fork[ arr_phil[id].right].in_use = true;
+		arr_phil[id].getting_right_frk = false;
+		arr_phil[id].getting_left_frk = false;
+		arr_phil[id].count++;
 		return 1;
 	}
 }
@@ -87,14 +88,14 @@ int get_fork(int id, philosopher* me, var_frk *afrk)
  * Put fork function
  * Information: -Thread/philosopher puts forks back down
  */
-void put_fork (int id, var_frk *afrk, philosopher *me) 
+void put_fork (int id) 
 {
-	printf("%s is putting the fork down.\n\n", me[id].name.c_str());	
-	afrk[me[id].left].in_use = false;
-	afrk[me[id].right].in_use = false;
+	printf("ID:%d, %s is putting the fork down.\n\n", id, arr_phil[id].name.c_str());	
+	arr_fork[arr_phil[id].left].in_use = false;
+	arr_fork[arr_phil[id].right].in_use = false;
 }
 
-int check_neighbor(int id, philosopher *me){
+int check_neighbor(int id ){
 	int neighbor_left; 
 	int neighbor_right;
 
@@ -114,7 +115,7 @@ int check_neighbor(int id, philosopher *me){
 		neighbor_right= id;
 	}
 	
-	if (me[neighbor_left].getting_right_frk == true || me[neighbor_right].getting_left_frk == true)
+	if (arr_phil[neighbor_left].getting_right_frk == true || arr_phil[neighbor_right].getting_left_frk == true)
 	{
 		return 0;
 	}
@@ -126,29 +127,30 @@ int check_neighbor(int id, philosopher *me){
 
 void *dinner_time(void *i) 
 {
-	//struct thread_data *mydata;
-	//mydata = (struct thread_data *) thread_data;
 	int id = (intptr_t) i;
-	cout << "My ID is: " << id << "\n" << endl;
-	/*var_frk *local_frk = mydata->thread_frk;
-	philosopher *local_phi = mydata->thread_phi;
-	
+	//cout << "My ID is: " << id  << endl;
 
-	while(true) {
-		think(id, local_phi);
+	while(true)
+	{
+		think(id);
 		//check neighbors hands
-		if(check_neighbor(id,local_phi) != 0)
+		if(check_neighbor(id) != 0)
 		{
 			//check my hands
-			if( get_fork(id, local_phi, local_frk) != 0)
+			if( get_fork(id) != 0)
 			{
-				eat(id, local_phi);
-				put_fork(id, local_frk, local_phi);
+				eat(id);
+				put_fork(id);
+				//print out the total number
+				puts("-------------");
+				for(int j = 0; j < 5 ; j++){
+					cout << "number: " << j << "total take forks #:" << arr_phil[j].count << endl;
+				}
+				puts("-------------");
 			}
 		}
-	/
+	}
 }
-*/}
 
 /*
  * Main function
@@ -161,19 +163,11 @@ int main ()
 	void *status;
 	int i;
 
-
-
 	// Seed random number generator
 	srand (time (NULL)); 	
   
-	// initialize the array of fork and philosophs 
-	for (i = 0; i < MAX_FORKS; i++){
-		arr_fork[i]->in_use = false;
-	}
-
-
 	//Creates the five threads
-    	pthread_t threads[MAX_PHILOSOPHERS]; // C Threads
+    pthread_t threads[MAX_PHILOSOPHERS]; // C Threads
 
     //Create a lock
    	pthread_mutex_init(&mutexnum, NULL);
@@ -198,12 +192,12 @@ int main ()
 	}	
 	
 	// Kill threads
-	//for (i = 0; i < MAX_PHILOSOPHERS; i++) {
-	//	pthread_kill(threads[i],run);
-	//	pthread_join(threads[i],&status);
-	//}
+	for (i = 0; i < MAX_PHILOSOPHERS; i++) {
+		pthread_join(threads[i],&status);
+	}
 
-	pthread_mutex_destroy (&mutexnum);
+	printf("After joining \n");	
+	//pthread_mutex_destroy (&mutexnum);
 	
 	return 0;		
 }

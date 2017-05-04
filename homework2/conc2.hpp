@@ -31,6 +31,7 @@ struct philosopher
 	string name;
 	bool getting_left_frk; 
 	bool getting_right_frk;
+	int count;
 };
 
 
@@ -47,9 +48,9 @@ struct thread_data
 
 
 
-void think(int x, philosopher *arr_phil);
-void eat(int x,  philosopher *arr_phil );
-int get_fork(int id, philosopher* me, var_frk *afrk);
-void put_fork (int id, var_frk *afrk, philosopher *me);
-int check_neighbor(int id, philosopher *me);
+void think(int x );
+void eat(int x);
+int get_fork(int id);
+void put_fork (int id);
+int check_neighbor(int id);
 void *dinner_time(void *i);
