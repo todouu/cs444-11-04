@@ -1,4 +1,4 @@
 main:
-	gcc -pthread -o forks conc2.cpp
+	clang++ -pthread -o forks conc2.cpp -std=c++0x 
 clean:
-	rm main
+	rm forks
