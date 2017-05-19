@@ -3,18 +3,21 @@
 
 #include <stdio.h>
 #include <string.h>
-#include <stdlib.h>
+#include <cstdlib>
 #include <pthread.h>
 #include <time.h>
 #include <unistd.h>
 #include <immintrin.h>
 #include <stdio.h>
 #include <signal.h>
+#include <iostream>
+#include <semaphore.h>
 
+using namespace std;
 
 struct mylink{
 	int value;
-	link *next;
+	struct mylink *next;
 };
 
 void *searcher(void* );
@@ -26,7 +29,7 @@ void run_handler(int );
 
 //linked list function
 
-mylink find_last(mylink*);
+mylink* find_last(mylink*);
 
 
 

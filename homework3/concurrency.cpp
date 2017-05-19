@@ -20,90 +20,85 @@ pthread_cond_t delete_in_use;
 pthread_cond_t insert_free;
 pthread_cond_t insert_in_use;
 
-//mydata* work[MaxJob];
 int try_insert = 0;
 int try_delete = 0;
 
 // Global Linked list init
-mylink *root = new mylink;
-root->next = NULL;
-root->value = 0;
+//struct mylink *root = new mylink;
+//root->next = NULL;
+//root->value = 0;
 
-void *searcher(void* id)
+void *searcher(void* t)
 {
+	int id = (intptr_t) t;
         while(1) {  
-				//searchSwitch.wait(noSearcher) 
-
-				//# critical section 
-
-				//searchSwitch.signal(noSearcher)
-
-
-                //Lock out other threads so they don't try and access same value
-                pthread_mutex_lock(&cmutexnum);
-                pthread_mutex_lock(&mutexnum);
-               
-                //if is empty, just wait
-                pthread_cond_wait(&c_empty, &mutexnum);
-               
-
-                //unlock the data
-                pthread_mutex_unlock (&cmutexnum);
-                pthread_mutex_unlock (&mutexnum);
-
-                //let other thread know, u can work!
-                pthread_cond_broadcast(&c_full);
-
+        	//========Class note============
+			//searchSwitch.wait(noSearcher) 
+			//critical section 
+			//searchSwitch.signal(noSearcher)
+			//==============================
+            //Lock out other threads so they don't try and access same value
+            //int x = //rand % size of linked list 
+	    // loop until at x number in the linked list,
+	    // print out the linked list value and thread id
+	    // end
+            cout << "Searcher, this is my id#: " << id << endl;   
+            //unlock the data
         }
 }
 
-void *inserter(void* id)  //void* data)
+void *inserter(void* t)  //void* data)
 {
+	int id = (intptr_t) t;
         while(1) {
-		// #### NOTE
-		// Do we need these locks? Delete should be the only one with locks
-              	//pthread_mutex_lock(&pmutexnum);
-             	//pthread_mutex_lock(&mutexnum);
-        // #### NOTE
 
-                //create local data 
-                mylink *local = (mylink*) malloc(sizeof(mylink)); //(mydata *) data;
-	
-                //if try_search == 1, then another thread is trying to search
-                while(try_insert == 1) {
-                        pthread_cond_wait(&insert_in_use, &mutexnum);
-                }
+        	//========Class note============
+			// insertSwitch.wait(noInserter) 
+			// insertMutex.wait()
+			// # critical section
+			// insertMutex.signal()
+			// insertSwitch.signal(noInserter)
+			//==============================
 
-                //do work
-                local->worknumer = my_rand(1);
-                local->waitnumer = my_rand(2);
-                work[work_count] = local;
-                work_count++;
+        	//pthread_mutex_lock(&locker);
+	    if(try_insert == 1) {
+       	   	 pthread_cond_wait(&insert_free,&locker);
+	    }
+	    try_insert = 1;
+           	//create local data 
+            //mylink *head = new mylink; 
+		
+   	    cout << "Inserter, this is my id#: " << id << endl; 
+            //unlock the data
+            //pthread_mutex_unlock(&locker);
 
-                //unlock the data
-                pthread_mutex_unlock (&pmutexnum);
-                pthread_mutex_unlock (&mutexnum);
+		    //let other thread know you can work!
+            try_insert = 0;
+	    pthread_cond_broadcast(&insert_free);
 
-                //let other thread know you can work!
-                if(work_count) {
-                        pthread_cond_broadcast(&insert_free);
-                }
-
-                //sleep(my_rand(3));
         }
 }
 
-void *deleter(void* id) 
+void *deleter(void* t) 
 {
-
+	int id = (intptr_t) t; 	
+	while(1) {
+		cout << "Deleter before lock." << endl;
+		pthread_mutex_lock(&locker);
+		//int x = // rand % size of linked list
+		cout << "Deleter, this is my id#: " << id << endl; 
+		pthread_mutex_unlock(&locker); 
+		cout << "Deleter unlocked." << endl;
+		sleep(3);
+	}
 }
 
 
 //linked list function
-mylink find_last(mylink* head){
-	head = root;
+mylink* find_last(mylink* head){
+	//head = root;
 	while(head->next!= NULL){
-		head = head->next 
+		head = head->next; 
 	}
 	return head;
 }
@@ -144,24 +139,25 @@ int main (int argc, char **argv)
         pthread_cond_init(&delete_in_use, NULL); // Delete broadcast variable
         pthread_cond_init(&delete_free, NULL); // Delete broadcast variable
         
-        // Initialize our buffer count variable
-        work_count = 0;
-     
         // Generate two threads for each of them 
         // Searcher
-        pthread_create(&threads[0], NULL, searcher, 1);
-        pthread_create(&threads[1], NULL, searcher, 2);
+        pthread_create(&threads[0], NULL, searcher, (void*) (intptr_t)1);
+        pthread_create(&threads[1], NULL, searcher, (void*) (intptr_t)2);
         // Inserter
-        pthread_create(&threads[2], NULL, inserter, 3);
-        pthread_create(&threads[3], NULL, inserter, 4);        
+        pthread_create(&threads[2], NULL, inserter, (void*) (intptr_t)3);
+        pthread_create(&threads[3], NULL, inserter, (void*) (intptr_t)4);        
         // Deleter
-        pthread_create(&threads[4], NULL, deleter, 5);
-        pthread_create(&threads[5], NULL, deleter, 6);
+        pthread_create(&threads[4], NULL, deleter, (void*) (intptr_t)5);
+        pthread_create(&threads[5], NULL, deleter, (void*) (intptr_t)6);
 
         // Catch ctrl-c to start the end of process of the program
         signal(SIGINT, run_handler);
-
+        int count = 0;
         while(run) {
+        		count++;
+        		if (count == 100000){
+        			 exit(0) ;
+        		}
                 continue;
         }
         // kill threads
@@ -174,9 +170,7 @@ int main (int argc, char **argv)
         // free memory from struct array
         freeBuffer();
        
-        pthread_mutex_destroy (&mutexnum);
-        pthread_mutex_destroy (&pmutexnum);
-        pthread_mutex_destroy (&cmutexnum);
+        pthread_mutex_destroy (&locker);
 
         return 0;
 }
