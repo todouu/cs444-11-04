@@ -15,21 +15,24 @@
 
 using namespace std;
 
-struct mylink{
-	int value;
-	struct mylink *next;
+struct node{
+	int data;
+	struct node *next;
 };
+
+struct node* new_node(int );
 
 void *searcher(void* );
 void *inserter(void* );
 void *deleter(void* );
 
-void freeBuffer();
 void run_handler(int );
 
 //linked list function
-
 mylink* find_last(mylink*);
+int search_val(int );
+int delete_val(int );
+void insert_edn(int );
 
 
 

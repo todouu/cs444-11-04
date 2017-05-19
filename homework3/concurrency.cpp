@@ -24,9 +24,7 @@ int try_insert = 0;
 int try_delete = 0;
 
 // Global Linked list init
-//struct mylink *root = new mylink;
-//root->next = NULL;
-//root->value = 0;
+struct node *head = new node;
 
 void *searcher(void* t)
 {
@@ -93,37 +91,95 @@ void *deleter(void* t)
 	}
 }
 
+//=============================
+//    linked list function
+//=============================
 
-//linked list function
-mylink* find_last(mylink* head){
-	//head = root;
-	while(head->next!= NULL){
-		head = head->next; 
+//Create a new node
+struct node* new_node(int x){
+	struct node* newNode = new node; 
+	newNode->data = x;
+	newNode->next = NULL;
+	return newNode;
+}
+
+//Insert data at the tail of linked list
+void insert_end(int x) {
+   	struct node* cur = head;
+  	struct node* newNode = new_node(x);
+	if(head == NULL) {
+		head = newNode;
+		return;
 	}
-	return head;
+	while(cur->next != NULL){ 
+		cur = cur->next; 
+		cur->next = newNode;
+	}
 }
 
-
-
-// Free allocated space for the buffer and structs
-void freeBuffer() 
+//Delete a val from linked list
+int delete_val(int x)
 {
-	/*
-        int i;
-        for(i = 0; i < MaxJob; i++) {
-                if(work[i] != NULL) {
-                        free(work[i]);
-                }
-        }
-    */
+	struct node* cur = head;
+	struct node* temp;
+	//nothing need to delete
+	if(head == NULL)
+	{
+		return -1;
+	}
+	//if only one things to delete
+	if(head->data == x) {
+		if(head->next != NULL)
+		{
+			temp = head->next;
+		 	free(head);
+			head = temp;
+		}		
+	    else{
+			free(head);
+			head = NULL;
+		}
+			return 0;
+	}	
+	//search val to delete
+	while(cur->next != NULL){
+			temp = cur;
+			cur = cur->next;
+			if(cur->data == x){
+				temp->next = cur->next;
+				free(cur);
+				return 0;
+			}
+	}
+	return -1;
 }
 
+//Search a value in the linked list
+int search_val(int x)
+{
+	struct node* cur = head;
+	if(head == NULL){
+	   return -1;
+	}
+	while(cur->next != NULL){
+		if(cur->data == x){
+			return 0;
+	  	}
+		cur = cur->next;
+	 }
+	return -1;
+}
+
+
+// signal control
 void run_handler(int val) 
 {
         run = 0;
 }
 
-
+//=============================
+//       main function 
+//=============================
 int main (int argc, char **argv)
 {
         srand (time (NULL));
