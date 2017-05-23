@@ -1,0 +1,111 @@
+\input{preamble}
+\usepackage[T1]{fontenc}
+\usepackage{geometry}
+\geometry{textwidth=10cm}
+\sffamily
+
+\title{
+	Project Three Writeup \\
+    {
+    	% Document Sub-title
+    	\LARGE Spring 2017 
+    }
+}
+\author{
+  \IEEEauthorblockN{Shuai Peng (pengs),}
+  \IEEEauthorblockN{Anya Lehman (lehmana),}
+  \IEEEauthorblockN{Andrew Bowers (bowerand),}
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Document
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Title Page
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\maketitle
+\begin{abstract}
+  This is our write up for the project three. \textit{Encrypted Block Device}.
+\end{abstract}
+
+\clearpage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Design we used to implement the necessary algorithms 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Write Up of Project 3 Solution} We started by looking through the book to find information on how to set up the main file, sbd.c, and then looked into how we were going to encrypt the data. We set up the sbd.c, edited it to accept module parameters (for the key), and then edited the I/O function in sbd.c to encrypt when it does writes and decrypt when it does reads. 
+
+\section{Questions Regarding Project 3}
+\begin{enumerate}
+
+   \item \textit{What do you think the main point of this assignment is} The main point of the assignment was to understand the importance of documentation. The Crypto API is incredibly undocumented making it rather difficult to use. As software developers, it is imperative for us to understand the importance of documentation so that when we write our own code, it is well documented. 
+
+   \item \textit{How did you personally approach the problem? Design decisions, algorithm, etc.} After reading through some parts of the book, we realised we just needed to edit the sbd.c file to also encrypt its reads and writes. From there, we read through the sbd.c file and found where it handles I/O. Editing this function to encrypt on writes and decrypt on reads based ont he key based in as a module parameter allowed us to encrypt data. We looked at the cbc library for block encryption.  
+
+   \item \textit{How did you ensure your solution was correct? Testing details, for instance.} We tested our driver by loading, mounting, and running the driver to make sure it was set up correctly. We also ran some inputs through to make sure it was writing as it should. 
+
+   \item \textit{What did you learn?} As we mentioned earlier, it is incredibly important to document your code and how it works. Doing so ensures others using it will have a much better understanding of how it works along with increasing the efficiency of its use (programmers using the code can figure it out much easier).   
+
+\end{enumerate}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Version control log information 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Version Control Log}
+\begin{center}
+\begin{tabular}{ |c|c|c| }
+   File Version & Group Member(s) & What Was Done \\
+   \hline \hline
+   V1 & Shaui & Created the program file to work from \\
+   \hline
+   V2 & Shaui & Used sbd.c file from book\\
+   \hline
+   V2 & Andrew & Assisted in cbc information and program development\\
+   \hline
+   V3 & Andrew & Started and set up the writeup\\
+   \hline
+   v6 & Anya & Worked on writeup\\
+   \hline
+   v7 & All & Compiled it all together\\
+   \hline
+\end{tabular}
+\end{center}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Work log information 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Work Log}
+\begin{center}
+\begin{tabular}{ |c|c|c|c|c|c| }
+   Date & Group Member(s) & Start Time & End Time & Total Time Worked & Accomplished \\ 
+   \hline \hline
+   May 20th and 21st & All & N/A & N/A & Throughout day & Talk about the assignment and\\
+    &  &  &  &  & Set up our working environment \\
+    &  &  &  &  & Reviewed project information \\
+    &  &  &  &  & Start/End times are N/A because
+    &  &  &  &  & is was online meeting throughout day \\
+   \hline
+   May 22nd & All & 10:00am & N/A & Most of the Day & Set up the folder to contain \\
+    &  &  &  &  & the work on project\\
+    &  &  &  &  & Set up ram disk driver itself\\
+    &  &  &  &  & worked on the cbc encryption\\
+    &  &  &  &  & setup and started/finished the writeup\\
+   \hline
+\end{tabular}
+\end{center}
+
+\section{Citations}
+\begin{thebibliography}{9}
+   \bibitem{Linux Device Drivers}
+      Jonathan Corbet, Alessandro Rubini, and Greg Kroah-Hartman.
+      \textit{Linux Device Drivers}.
+      Eklektix INC, 2017.
+   \bibitem{The Linux Kernel}
+      The Linux Kernel.
+      \textit{Code Example For Symmetric Key Cipher Operation}.
+      url: https://kernel.readthedocs.io/en/sphinx-samples/crypto-API.html#code-examplesawrence Livermore National Laboratory, 2017.   
+\end{thebibliography}
+\end{document}
