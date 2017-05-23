@@ -29,10 +29,10 @@ void *deleter(void* );
 void run_handler(int );
 
 //linked list function
-mylink* find_last(mylink*);
+struct node* find_last(node*);
 int search_val(int );
 int delete_val(int );
-void insert_edn(int );
+void insert_end(int );
 
 
 
