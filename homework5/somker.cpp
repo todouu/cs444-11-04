@@ -25,7 +25,7 @@ bool isMatch = false;
 void* smokerA(void*) {	
 	while(1) {
 		sem_wait(&tobaccosem);
-		printf("Smoker A will start smoking.\n");
+		printf("\nSmoker A will start smoking.\n");
 		sleep(rand() % 3 + 1);
 		printf("Smoker A has finished smoking.\n\n");
 		sem_post(&agentSem);
@@ -36,7 +36,7 @@ void* smokerA(void*) {
 void* smokerB(void*) {
 	while(1) {
 		sem_wait(&papersem);
-		printf("Smoker B will start smoking.\n");
+		printf("\nSmoker B will start smoking.\n");
 		sleep(rand() % 3 + 1); 
 		printf("Smoker B has finished smoking.\n\n");
 		sem_post(&agentSem);
@@ -47,14 +47,14 @@ void* smokerB(void*) {
 void* smokerC(void*) {
 	while(1) {
 		sem_wait(&matchessem);
-		printf("Smoker C will start smoking.\n");
+		printf("\nSmoker C will start smoking.\n");
 		sleep(rand() % 3 + 1);
 		printf("Smoker C has finished smoking.\n\n");
 		sem_post(&agentSem);
 	}
 }
 
-// the agent that places items down. 
+// The agent that places items down. 
 void* agentFunc(void*) {
 	while(1) {
 		sem_wait(&agentSem);		
@@ -77,81 +77,83 @@ void* agentFunc(void*) {
 	}
 }
 
-/*This pusher prevents deadlocks for tobacco*/
+// This pusher prevents deadlocks for tobacco
 void* tobacco_pusher(void*){
 	while(1){
 	    printf("Tobacco pusher wait for tobacco \n");
 	    sem_wait(&tobacco);
-	    printf("tobacco pusher get tobacco from the table \n");
+	    printf("Tobacco pusher get tobacco from the table \n");
 	    sem_wait(&mutex);
 	    if(isPaper){
 	      isPaper = false;
 	      sem_post(&matchessem);
-	      printf("tobacco puhser give the tobacco and paper to smoker C\n");
+	      printf("Tobacco puhser give the tobacco and paper to smoker C\n");
 	    }
 	    else if(isMatch){
 	      isMatch = false;
 	      sem_post(&papersem);
-	      printf("tobacco puhser give the tobacco and matches to smoker B\n");
+	      printf("Tobacco puhser give the tobacco and matches to smoker B\n");
 	    }
 	    else {
 	    	isTobacco = true;
-	      	printf("tobacco puhser find nothing, and put tobacco back\n");
+	      	printf("Tobacco puhser find nothing, and put tobacco back\n");
 
 	    }
 	    sem_post(&mutex);
-  		}
+  	}
 }
 
 
-/*This pusher prevents deadlocks for paper*/
-void* paper_pusher(void*){
-  while(1){
-  		printf("paper_pusher wait for paper \n");	
+//This pusher prevents deadlocks for paper
+void* paper_pusher(void*)
+{
+  	while(1){
+  		printf("Paper_pusher wait for paper \n");	
 		sem_wait(&paper);
-		printf("paper_pusher get the paper from the table \n");
+		printf("Paper_pusher get the paper from the table \n");
 		sem_wait(&mutex);
 		if(isTobacco){
 		  isTobacco = false;
 		  sem_post(&matchessem);
-		  printf("paper_pusher give the paper and tobacco to smoker C\n");
+		  printf("Paper_pusher give the paper and tobacco to smoker C\n");
 		}
 		else if(isMatch){
 		  isMatch = false;
 		  sem_post(&tobaccosem);
-		  printf("paper_pusher give the paper and mathces to smoker A\n");
+		  printf("Paper_pusher give the paper and mathces to smoker A\n");
 		}
 		else {
 			isPaper = true;
-			printf("paper_pusher find nothing from table, and put paper back \n");
+			printf("Paper_pusher find nothing from table, and put paper back \n");
 		}
 		sem_post(&mutex);
-		}
+	}
 }
 
-/*This pusher prevents deadlocks for match*/
-void* matches_pusher(void*){
-  while(1){
-  		printf("matches_pusher wait for matches \n");
-	    sem_wait(&matches);
-	    printf("matches_pusher get the matches from table \n");
-	    sem_wait(&mutex);
-	    if(isTobacco){
-	      isTobacco = false;
-	      sem_post(&papersem);
-	      printf("matches_pusher give the mathces and tobacco to somker B\n");
-	    }
-	    else if(isPaper){
-	      isPaper = false;
-	      sem_post(&tobaccosem);
-	      printf("matches_pusher give the mathces and paper to somker A\n");
-	    }
-	    else{ 
-	    	isMatch = true;
-			printf("matches_pusher find nothing from table, and put ma back \n");
-	    }
-	    sem_post(&mutex);
-	    }
+//This pusher prevents deadlocks for match
+void* matches_pusher(void*)
+{
+	while(1){
+  		printf("Matches_pusher wait for matches \n");
+	    	sem_wait(&matches);
+	    	printf("Matches_pusher get the matches from table \n");
+	    	sem_wait(&mutex);
+	    	if(isTobacco){
+	     		 isTobacco = false;
+	      		sem_post(&papersem);
+	      		printf("Matches_pusher give the mathces and tobacco to smoker B\n");
+	    	}
+	    	else if(isPaper){
+	      		isPaper = false;
+	      		sem_post(&tobaccosem);
+	      		printf("Matches_pusher give the mathces and paper to smoker A\n");
+	    	}
+	    	else{ 
+	    		isMatch = true;
+			printf("Matches_pusher find nothing from table, and put ma back \n");
+	    	}
+	    	sem_post(&mutex);
+	}
 }
 
 
@@ -183,12 +185,11 @@ int main() {
 	pthread_create(&pusher[2], NULL, &matches_pusher, NULL);
 	// The agent threads.	
 	pthread_create(&agent, NULL, &agentFunc, NULL);
+	// thread join
 	for(int i=0 ; i<3 ; i++){
 		pthread_join(smoker[i], NULL);
 		pthread_join(pusher[i], NULL);
 	}
 	pthread_join(agent, NULL);
-
-	std::cout << "GG" << std::endl;
 
 }
